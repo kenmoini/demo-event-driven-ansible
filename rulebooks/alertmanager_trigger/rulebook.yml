@@ -11,13 +11,13 @@
     - name: CPU Quota Exceeded Critical Threshold - Expand to Cloud
       condition: event.alert.labels.alertname == "cpuRequestQuotaCritical" and event.alert.status == "firing"
       action:
-        run_workflow_template:
+        run_job_template:
           name: expand-to-cloud
           organization: "Default"
 
     - name: CPU Quota Normalized - Scale down from Cloud
       condition: event.alert.labels.alertname == "cpuRequestQuotaCritical" and event.alert.status == "resolved"
       action:
-        run_workflow_template:
+        run_job_template:
           name: scale-down-cloud
           organization: "Default"
