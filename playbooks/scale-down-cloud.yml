@@ -9,11 +9,21 @@
     - name: Debug event
       ansible.builtin.debug:
         msg: "{{ ansible_eda.event }}"
-    #- name: Create Namespace
-    #  kubernetes.core.k8s:
-    #    state: present
-    #    definition:
-    #      apiVersion: v1
-    #      kind: Namespace
-    #      metadata:
-    #        name: "{{ ns }}"
+
+    - name: Scale down the cloud workload if the alert is from the target namespace
+      when: ansible_eda.event.alert.labels.namespace == workload_ns
+      block:
+
+        - name: Scale down Deployment
+          kubernetes.core.k8s:
+            state: present
+            api_version: apps/v1
+            kind: Deployment
+            name: cpu-load
+            namespace: "{{ workload_ns }}"
+            merge_type:
+              - strategic-merge
+              - merge
+            definition:
+              spec:
+                replicas: 0

@@ -3,17 +3,65 @@
   hosts: localhost
   gather_facts: false
   vars:
-    ns: "{{ ansible_eda.event.resource.metadata.name }}"
+    workload_ns: alertmanager-trigger
 
   tasks:
     - name: Debug event
       ansible.builtin.debug:
         msg: "{{ ansible_eda.event }}"
-    #- name: Create Namespace
-    #  kubernetes.core.k8s:
-    #    state: present
-    #    definition:
-    #      apiVersion: v1
-    #      kind: Namespace
-    #      metadata:
-    #        name: "{{ ns }}"
+
+    - name: Expand into the cloud if the alert is from the target namespace
+      when: ansible_eda.event.alert.labels.namespace == workload_ns
+      block:
+
+        - name: Create Namespace
+          kubernetes.core.k8s:
+            state: present
+            kind: Namespace
+            api_version: v1
+            merge_type:
+              - strategic-merge
+              - merge
+            definition:
+              metadata:
+                name: "{{ workload_ns }}"
+                #labels:
+                  #openshift.io/cluster-monitoring: 'true'
+              spec: {}
+
+        - name: Create Deployment
+          kubernetes.core.k8s:
+            state: present
+            merge_type:
+              - strategic-merge
+              - merge
+            definition:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                namespace: "{{ workload_ns }}"
+                name: cpu-load
+                annotations: {}
+              spec:
+                selector:
+                  matchLabels:
+                    app: cpu-load
+                replicas: 2
+                template:
+                  metadata:
+                    labels:
+                      app: cpu-load
+                  spec:
+                    containers:
+                      - name: cpu-load
+                        resources:
+                          limits:
+                            cpu: 900m
+                            memory: 128Mi
+                          requests:
+                            cpu: 650m
+                            memory: 128Mi
+                        image: 'quay.io/simonkrenger/cpuload:latest'
+                strategy:
+                  type: Recreate
+                paused: false
