@@ -1,3 +1,6 @@
+# ansible-builder build -f kitchen-sink.yml -t kitchen-sink-de:latest
+# podman tag kitchen-sink-de:latest quay.io/kenmoini/ansible-kitchen-sink-de:latest
+# podman push quay.io/kenmoini/ansible-kitchen-sink-de:latest
 version: 3
 
 images:
