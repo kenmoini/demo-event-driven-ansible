@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: alertmanager-trigger
+  name: cpu-load
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: cpu-load
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: cpu-load
+    spec:
+      containers:
+        - name: cpu-load
+          resources:
+            limits:
+              cpu: 900m
+              memory: 128Mi
+            requests:
+              cpu: 650m
+              memory: 128Mi
+          image: 'quay.io/simonkrenger/cpuload:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env: []
+      imagePullSecrets: []
+  strategy:
+    type: Recreate
+  paused: false

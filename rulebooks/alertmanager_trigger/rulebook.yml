@@ -1,0 +1,16 @@
+---
+- name: Automatic Remediation from Alert Manager
+  hosts: all
+  execution_strategy: parallel
+  sources:
+    - name: Listen for alerts from Alert Manager
+      ansible.eda.alertmanager:
+        host: 0.0.0.0
+        port: 8000
+  rules:
+    - name: CPU Quota Exceeded Critical Threshold
+      condition: event.alert.labels.alertname == "cpuRequestQuotaCritical" and event.alert.status == "firing"
+      action:
+        run_workflow_template:
+          name: "Automated Response Expand to Alternative Cluster"
+          organization: "Default"
