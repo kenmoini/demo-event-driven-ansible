@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   vars:
-    ns: "{{ ansible_eda.event.resource.metadata.name }}"
+    workload_ns: alertmanager-trigger
 
   tasks:
     - name: Debug event
