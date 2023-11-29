@@ -8,9 +8,9 @@
         host: 0.0.0.0
         port: 8000
   rules:
-    - name: CPU Quota Exceeded Critical Threshold
+    - name: CPU Quota Exceeded Critical Threshold - Expand to Cloud
       condition: event.alert.labels.alertname == "cpuRequestQuotaCritical" and event.alert.status == "firing"
       action:
         run_workflow_template:
-          name: "Automated Response Expand to Alternative Cluster"
+          name: expand-to-cloud
           organization: "Default"

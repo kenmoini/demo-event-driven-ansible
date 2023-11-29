@@ -17,10 +17,6 @@
         name: "{{ ns }}"
       register: ns_info
 
-    - name: Debug namespace info
-      ansible.builtin.debug:
-        msg: "{{ ns_info }}"
-
     - name: Set resource quotas if the namespace does not have an annotation marking to skip
       when: ns_info.resources[0].metadata.annotations['skip-resource-quota'] is not defined
       kubernetes.core.k8s:
