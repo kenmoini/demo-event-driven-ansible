@@ -1,0 +1,19 @@
+---
+- name: Scale down workload in a different OCP Cluster
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ns: "{{ ansible_eda.event.resource.metadata.name }}"
+
+  tasks:
+    - name: Debug event
+      ansible.builtin.debug:
+        msg: "{{ ansible_eda.event }}"
+    #- name: Create Namespace
+    #  kubernetes.core.k8s:
+    #    state: present
+    #    definition:
+    #      apiVersion: v1
+    #      kind: Namespace
+    #      metadata:
+    #        name: "{{ ns }}"
