@@ -1,0 +1,11 @@
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: resource-quota
+  namespace: alertmanager-trigger
+spec:
+  hard:
+    limits.cpu: '3'
+    limits.memory: 3Gi
+    requests.cpu: '2'
+    requests.memory: 2Gi
